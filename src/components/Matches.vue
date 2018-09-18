@@ -7,6 +7,10 @@
 <script>
 import axios from 'axios'
 import _ from 'lodash'
+import champs from '../assets/champion.json'
+import itemss from '../assets/item.json'
+import runes from '../assets/runesReforged.json'
+import summss from '../assets/summoner.json'
 
 export default {
   name: 'Matches',
@@ -41,8 +45,7 @@ export default {
       this.searched = true
       let summid = newVal.data.accountId
       let matches = await axios
-        .get('https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/' + summid + '?beginIndex=0&endIndex=2&api_key=' + process.env.Riot_API)
-      console.log(matches)
+        .get('https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/' + summid + '?beginIndex=0&endIndex=5&api_key=' + process.env.Riot_API)
       for (var i in matches.data.matches) {
         let gid = matches.data.matches[i].gameId
         this.createtable(gid, this.summid)
@@ -58,6 +61,7 @@ export default {
         Mode: null,
         Length: null,
         Summs: [],
+        Summsid: [],
         Runesid: [],
         Runes: [],
         KDA: null,
@@ -80,14 +84,12 @@ export default {
               break
             }
           }
-          console.log(response.data)
           let gameinfo = response.data.participants[ourIndex]
-          console.log(gameinfo)
           data.Win = gameinfo.stats.win
           data.Champion = gameinfo.championId
           data.Mode = response.data.gameMode
           data.Length = Math.floor(response.data.gameDuration / 60)
-          data.Summs = [gameinfo.spell1Id, gameinfo.spell2Id]
+          data.Summsid = [gameinfo.spell1Id, gameinfo.spell2Id]
           data.Runesid = [
             gameinfo.stats.perk0, gameinfo.stats.perk0Var1, gameinfo.stats.perk0Var2, gameinfo.stats.perk0Var3,
             gameinfo.stats.perk1, gameinfo.stats.perk1Var1, gameinfo.stats.perk1Var2, gameinfo.stats.perk1Var3,
@@ -105,46 +107,39 @@ export default {
           data.Creeps = gameinfo.stats.totalMinionsKilled
           data.CPM = gameinfo.stats.totalMinionsKilled / data.Length
           // Name fetching
-          axios.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json')
-            .then(response => {
-              let chardata = response.data.data
-              let cid = data.Champion
-              let found = _.find(chardata, function (o) { return o.key === cid })
-              data.Champion = found.name
-            })
+          let chardata = champs.data
+          let cid = data.Champion.toString()
+          let found = _.find(chardata, function (o) { return o.key === cid })
+          data.Champion = found.name
 
-          axios.get(' http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json')
-            .then(response => {
-              let itemdata = response.data.data
-              let holdarry = []
-              for (var i in data.Itemsid) {
-                let cid = data.Itemsid[i]
-                let found = itemdata[cid]
-                holdarry.push(found.name)
-              }
-              data.Items = holdarry
-            })
-
-          axios.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/rune.json')
-            .then(response => {
-              let runedata = response.data.data
-              console.log(runedata)
-              let temparr = []
-              for (var n in data.Runesid) {
-                if (data.Runesid[n] !== 0) {
-                  temparr.push(data.Runesid[n])
-                }
-              }
-              console.log(temparr)
-              let holdarry = []
-              for (var i in temparr) {
-                let cid = temparr[i]
-                let found = runedata[cid]
-                holdarry.push(found.name)
-              }
-              console.log(holdarry)
-            })
-
+          let itemdata = itemss.data
+          for (var m in data.Itemsid) {
+            if (data.Itemsid[m] === 0) {
+            } else {
+              let cid = data.Itemsid[m]
+              data.Items.push(itemdata[cid].name)
+            }
+          }
+          let runedata = runes
+          let temparr = []
+          for (var n in data.Runesid) {
+            if (data.Runesid[n] !== 0) {
+              temparr.push(data.Runesid[n])
+            }
+          }
+          console.log(temparr)
+          console.log(runedata)
+          for (var o in temparr) {
+            let cid = temparr[o].toString()
+            let found = runedata[cid]
+            data.Runes.push(found)
+          }
+          let summdata = summss.data
+          for (var u in data.Summsid) {
+            let cid = data.Summsid[u].toString()
+            let found = _.find(summdata, function (o) { return o.key === cid })
+            data.Summs.push(found.id)
+          }
           this.items.push(data)
         })
     }
