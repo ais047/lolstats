@@ -1,5 +1,12 @@
 # lolstats
 
+To run = 
+npm install
+npm run dev
+enable CORS widget (https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en)
+navigate to localhost:8080
+
+
 --Lessions Learned:
 
 This was definetly pretty tough, my start with wanting to use vue definetly impacted hard on my ability to do this project. I had to debug and try to solve issues that had nothing to do with the project on top of the issues already with the project. I'd definetly want to do this over with not vue because it caused alot of problems maybe I wouldn't even use a framework. I feel I could have also avoided all the heroku and CORS trouble if I stayed away from vue. Maybe not CORS... but definetly heroku, it seemed to be a issue with webpack and babel or something. I wasn't able to use kayn or LeagueJS because somehow it broke when I tried to add to Vue, in hindsight I definetly should have ditched Vue for those libraries instead of the other way around however I was convinced this was better for me at the time. That was definetly my mistake. 
