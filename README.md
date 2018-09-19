@@ -1,6 +1,11 @@
 # lolstats
 
+
+
 To run = 
+
+Inside of config/dev.env.js you will need to input in a valid api key
+
 npm install
 npm run dev
 enable CORS widget (https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en)
